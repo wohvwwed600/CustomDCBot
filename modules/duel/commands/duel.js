@@ -2,16 +2,16 @@ const {localize} = require('../../../src/functions/localize');
 const {MessageEmbed} = require('discord.js');
 
 module.exports.run = async function (interaction) {
-    const member = interaction.options.getMember('user', true);
+    const member = interaction.options.getMember('المستخدم', true);
     if (member.user.id === interaction.user.id) return interaction.reply({
         ephemeral: true,
-        content: '⚠️ ' + localize('duel', 'self-invite-not-possible', {r: `<@${((await interaction.guild.members.fetch({withPresences: true})).filter(u => u.presence && u.user.id !== interaction.user.id && !u.user.bot).random() || {user: {id: 'RickAstley'}}).user.id}>`})
+        content: '⚠️ ' + localize('نزال', 'دعوة-نفسك-غير-ممكنة', {r: `<@${((await interaction.guild.members.fetch({withPresences: true})).filter(u => u.presence && u.user.id !== interaction.user.id && !u.user.bot).random() || {user: {id: 'RickAstley'}}).user.id}>`})
     });
     const rep = await interaction.reply({
-        content: localize('duel', 'challenge-message', {
+        content: localize('نزال', 'رسالة-التحدي', {
             t: member.toString(),
             u: interaction.user.toString()
-        }) + '\n*' + localize('duel', 'how-does-this-game-work') + '*',
+        }) + '\n*' + localize('duel', 'ازاي-اللعبة-دي-بتشتغل') + '*',
         allowedMentions: {
             users: [member.user.id]
         },
@@ -23,14 +23,14 @@ module.exports.run = async function (interaction) {
                     {
                         type: 'BUTTON',
                         style: 'PRIMARY',
-                        customId: 'duel-accept-invite',
-                        label: localize('duel', 'accept-invite')
+                        customId: 'اقبل-دعوة-النزال',
+                        label: localize('duel', 'اقبل-الدعوة')
                     },
                     {
                         type: 'BUTTON',
                         style: 'SECONDARY',
-                        customId: 'duel-deny-invite',
-                        label: localize('duel', 'deny-invite')
+                        customId: 'ارفض-دعوة-النزال',
+                        label: localize('duel', 'ارفض-الدعوة')
                     }
                 ]
             }
@@ -59,10 +59,10 @@ module.exports.run = async function (interaction) {
         if (!started) {
             if (i.user.id !== member.id) return i.reply({
                 ephemeral: true,
-                content: '⚠️ ' + localize('duel', 'you-are-not-the-invited-one')
+                content: '⚠️ ' + localize('duel', 'انت-مش-الشخص-المدعو')
             });
             if (i.customId === 'duel-deny-invite') {
-                endReason = localize('duel', 'invite-denied', {
+                endReason = localize('duel', 'الدعوة-مرفوضة', {
                     u: interaction.user.toString(),
                     i: member.toString()
                 });
@@ -71,10 +71,10 @@ module.exports.run = async function (interaction) {
             started = true;
         }
 
-        if (!i.customId.includes('invite')) {
+        if (!i.customId.includes('دعوة')) {
             if (i.user.id !== interaction.user.id && i.user.id !== member.user.id) return i.reply({
                 ephemeral: true,
-                content: '⚠️ ' + localize('duel', 'not-your-game')
+                content: '⚠️ ' + localize('duel', 'مش-دورك')
             });
             const action = i.customId.replaceAll('duel-', '');
             if (currentAnswers[i.user.id]) {
@@ -84,51 +84,51 @@ module.exports.run = async function (interaction) {
             if (action === 'reload') {
                 if (bullets[i.user.id] === 5) return i.reply({
                     ephemeral: true,
-                    content: '⚠️ ' + localize('duel', 'bullets-full')
+                    content: '⚠️ ' + localize('duel', 'الخزنة-مليانة')
                 });
                 bullets[i.user.id]++;
             }
             if (action === 'gun') {
                 if (bullets[i.user.id] === 0) return i.reply({
                     ephemeral: true,
-                    content: '⚠️ ' + localize('duel', 'no-bullets')
+                    content: '⚠️ ' + localize('duel', 'الخزنة-فاضية')
                 });
                 else bullets[i.user.id]--;
             }
             currentAnswers[i.user.id] = action;
 
             if (currentAnswers[member.user.id] && currentAnswers[interaction.user.id]) {
-                guardAfterEachOther[member.user.id] = currentAnswers[member.user.id] === 'guard' ? (guardAfterEachOther[member.user.id] + 1) : 0;
-                guardAfterEachOther[interaction.user.id] = currentAnswers[interaction.user.id] === 'guard' ? (guardAfterEachOther[interaction.user.id] + 1) : 0;
+                guardAfterEachOther[member.user.id] = currentAnswers[member.user.id] === 'احرس' ? (guardAfterEachOther[member.user.id] + 1) : 0;
+                guardAfterEachOther[interaction.user.id] = currentAnswers[interaction.user.id] === 'احرس' ? (guardAfterEachOther[interaction.user.id] + 1) : 0;
                 let guardOver = false;
-                if (currentAnswers[member.user.id] === 'gun' && guardAfterEachOther[interaction.user.id] >= 5) currentAnswers[interaction.user.id] = 'reload';
-                if (currentAnswers[interaction.user.id] === 'gun' && guardAfterEachOther[member.user.id] >= 5) currentAnswers[member.user.id] = 'reload';
-                if ((currentAnswers[interaction.user.id] === 'gun' && guardAfterEachOther[member.user.id] >= 5) || currentAnswers[member.user.id] === 'gun' && guardAfterEachOther[interaction.user.id] >= 5) guardOver = true;
-                const answers = [currentAnswers[member.user.id], currentAnswers[interaction.user.id]].sort((a, b) => ['reload', 'guard', 'gun'].indexOf(a) - ['reload', 'guard', 'gun'].indexOf(b));
+                if (currentAnswers[member.user.id] === 'اضرب' && guardAfterEachOther[interaction.user.id] >= 5) currentAnswers[interaction.user.id] = 'اعادة-تلقيم';
+                if (currentAnswers[interaction.user.id] === 'اضرب' && guardAfterEachOther[member.user.id] >= 5) currentAnswers[member.user.id] = 'اعادة-تلقيم';
+                if ((currentAnswers[interaction.user.id] === 'اضرب' && guardAfterEachOther[member.user.id] >= 5) || currentAnswers[member.user.id] === 'gun' && guardAfterEachOther[interaction.user.id] >= 5) guardOver = true;
+                const answers = [currentAnswers[member.user.id], currentAnswers[interaction.user.id]].sort((a, b) => ['reload', 'guard', 'gun'].indexOf(a) - ['اعادة-تلقيم', 'احرس', 'اضرب'].indexOf(b));
                 const params = {};
                 const actionTo = {
-                    'reload': 'r',
-                    'guard': 'd',
-                    'gun': 'g'
+                    'اعادة-تلقيم': 'r',
+                    'احرس': 'd',
+                    'اضرب': 'g'
                 };
                 params[actionTo[currentAnswers[member.user.id]] + '1'] = member.user.toString();
                 params[actionTo[currentAnswers[interaction.user.id]] + (params[actionTo[currentAnswers[interaction.user.id]] + '1'] ? '2' : '1')] = interaction.user.toString();
-                lastRoundString = localize('duel', (guardOver ? 'guard-over-' : '') + answers.join('-'), params);
-                if (answers.join('-') === 'reload-gun') ended = true;
+                lastRoundString = localize('duel', (guardOver ? 'الحماية-انتهت' : '') + answers.join('-'), params);
+                if (answers.join('-') === 'اعد-تلقيم-المسدس') ended = true;
                 currentAnswers = {};
             }
         }
 
 
-        let stateString = '\n\n' + localize('duel', 'what-do-you-want-to-do') + `\n${member.toString()}: ${localize('duel', currentAnswers[member.user.id] ? 'ready' : 'pending')}\n${interaction.user.toString()}: ${localize('duel', currentAnswers[interaction.user.id] ? 'ready' : 'pending')}\n\n${localize('duel', 'continues-info')}`;
+        let stateString = '\n\n' + localize('نزال', 'ايه-خطوتك-الجاية') + `\n${member.toString()}: ${localize('duel', currentAnswers[member.user.id] ? 'مستعد' : 'pending')}\n${interaction.user.toString()}: ${localize('نزال', currentAnswers[interaction.user.id] ? 'مستعد' : 'pending')}\n\n${localize('duel', 'معلومات-استكمال')}`;
 
         let mentions = undefined;
         if (!ended && !currentAnswers[interaction.user.id] && currentAnswers[member.user.id]) mentions = [interaction.user.id];
         if (!ended && !currentAnswers[member.user.id] && currentAnswers[interaction.user.id]) mentions = [member.user.id];
         const embed = new MessageEmbed()
-            .setTitle(localize('duel', ended ? 'game-ended' : 'game-running-header'))
+            .setTitle(localize('نزال', ended ? 'اللعبة-انتهت' : 'game-running-header'))
             .setColor(ended ? 0x2ECC71 : (!mentions ? 0xD35400 : 0xE67E22))
-            .setDescription(lastRoundString + (!ended ? stateString : '\n\n' + localize('duel', 'ended-state')) + '\n*' + localize('duel', 'how-does-this-game-work') + '*')
+            .setDescription(lastRoundString + (!ended ? stateString : '\n\n' + localize('نزال', 'ended-state')) + '\n*' + localize('duel', 'ازاي-بتشتغل-اللعبة') + '*')
             .setFooter({text: interaction.client.strings.footer, iconURL: interaction.client.strings.footerImgUrl});
 
         i.update({
@@ -145,24 +145,24 @@ module.exports.run = async function (interaction) {
                     components: [
                         {
                             type: 'BUTTON',
-                            customId: 'duel-gun',
+                            customId: 'اضرب-نار',
                             style: 'SECONDARY',
                             emoji: '🔫',
-                            label: localize('duel', 'use-gun')
+                            label: localize('نزال', 'استعمل-السلاح')
                         },
                         {
                             type: 'BUTTON',
-                            customId: 'duel-guard',
+                            customId: 'احمى-نفسك',
                             style: 'SECONDARY',
                             emoji: '🛡️',
-                            label: localize('duel', 'guard')
+                            label: localize('نزال', 'احرس')
                         },
                         {
                             type: 'BUTTON',
-                            customId: 'duel-reload',
+                            customId: 'اعادة-تلقيم',
                             style: 'SECONDARY',
                             emoji: '🔄',
-                            label: localize('duel', 'reload')
+                            label: localize('نزال', 'اعادة-تلقيم')
                         }
                     ]
                 }
@@ -180,15 +180,15 @@ module.exports.run = async function (interaction) {
 
 
 module.exports.config = {
-    name: 'duel',
-    description: localize('duel', 'command-description'),
+    name: 'نزال',
+    description: localize('نزال', 'وصف-الأمر'),
 
     options: [
         {
-            type: 'USER',
+            type: 'المستخدم',
             required: true,
             name: 'user',
-            description: localize('duel', 'user-description')
+            description: localize('نزال', 'وصف-المستخدم')
         }
     ]
 };
